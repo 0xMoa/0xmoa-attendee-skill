@@ -13,7 +13,9 @@ They do **not** need to know about backend transport or internal services.
 | | |
 |--|--|
 | Skill | [`SKILL.md`](./SKILL.md) |
-| Client + releases | [0xMoa/0xmoa-client](https://github.com/0xMoa/0xmoa-client) |
+| Long-running bots (cron / Hermes) | [`references/long-running-bots.md`](./references/long-running-bots.md) |
+| CFP pre-check script | [`scripts/cfp-precheck.sh`](./scripts/cfp-precheck.sh) |
+| Client + releases | [0xMoa/0xmoa-client](https://github.com/0xMoa/0xmoa-client) (`v0.2.0+`) |
 | Install script | https://0xmoa.ai/install.sh |
 
 ## Load in Grok
