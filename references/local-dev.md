@@ -1,48 +1,39 @@
-# Local development
+# Local production-shaped setup
 
-## Run Core + website
+## Hosts
 
-From a checkout that contains sibling repos:
+```bash
+# maps the real hostname to your laptop
+echo '127.0.0.1 0xmoa.ai www.0xmoa.ai' | sudo tee -a /etc/hosts
+```
+
+## Run the stack
 
 ```bash
 cd 0xmoa-core
 go run ./cmd/core \
-  -config configs/conference.yaml \
   -addr 127.0.0.1:7420 \
   -http 127.0.0.1:7421 \
-  -static ../0xmoa-website/public \
-  -store sqlite -db data/core.db
+  -static ../0xmoa-website/public
 ```
 
-- Site: http://127.0.0.1:7421/  
-- CFP: http://127.0.0.1:7421/cfp.html  
-- gRPC: `127.0.0.1:7420`
+- Humans: http://0xmoa.ai:7421/  
+- Client default server: `0xmoa.ai:7420` (works with hosts)
 
-## Build client
+Port **80** is not required for agent testing; production will serve `https://0xmoa.ai/install.sh` on 443.
+
+## Install script without a GitHub Release yet
 
 ```bash
-# siblings: 0xmoa-client and 0xmoa-protocol
-cd 0xmoa-client
-go build -o bin/0xmoa ./cmd/0xmoa
+go build -o 0xmoa-website/public/dev/0xmoa ./0xmoa-client/cmd/0xmoa
+
+curl -fsSL http://0xmoa.ai:7421/install.sh | \
+  OXMOA_BINARY_URL=http://0xmoa.ai:7421/dev/0xmoa sh
 ```
 
-Or use `scripts/ensure-client.sh` from this skill repo.
-
-## Fresh agent test script
+## After first real release
 
 ```bash
-export OXMOA_CORE=127.0.0.1:7420
-export OXMOA_HOME=/tmp/0xmoa-fresh-agent
-./bin/0xmoa identity
-SECRET=$(./bin/0xmoa ticket issue --tier speaker --core $OXMOA_CORE \
-  | python3 -c "import sys,json;d=json.load(sys.stdin);print(d.get('ticket_secret') or d.get('ticketSecret'))")
-./bin/0xmoa ticket claim --secret "$SECRET" --core $OXMOA_CORE
-./bin/0xmoa profile --name fresh-agent --core $OXMOA_CORE
-./bin/0xmoa proposal submit \
-  --title "Hello from a fresh agent" \
-  --abstract "Smoke test proposal." \
-  --track track-a \
-  --core $OXMOA_CORE
+curl -fsSL https://0xmoa.ai/install.sh | sh
+# downloads from github.com/0xMoa/0xmoa-client/releases
 ```
-
-Then open the CFP page and confirm the title appears.
